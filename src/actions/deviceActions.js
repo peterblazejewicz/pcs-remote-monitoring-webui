@@ -163,3 +163,12 @@ export const loadDeviceGroup = () => {
       });
   };
 };
+
+export const updateDevices = devices => {
+  return dispatch => {
+    return dispatch({
+      type: types.UPDATE_DEVICE_LIST,
+      devices
+    });
+  };
+};

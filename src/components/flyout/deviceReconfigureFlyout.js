@@ -14,6 +14,8 @@ import Spinner from '../spinner/spinner';
 import DeepLinkSection from '../deepLinkSection/deepLinkSection';
 import { getTypeOf } from '../../common/utils';
 import PcsBtn from '../shared/pcsBtn/pcsBtn';
+import SummarySection from '../summarySection/summarySection';
+
 import './deviceReconfigureFlyout.css';
 
 const validReportedProperties = [Config.STATUS_CODES.TYPE, Config.STATUS_CODES.LOCATION, Config.STATUS_CODES.FIRMWARE];
@@ -221,7 +223,7 @@ class DeviceReconfigureFlyout extends React.Component {
       description: lang.VIEW_JOB_STATUS,
       linkText: lang.VIEW
     };
-    
+
     return (
       <div className="device-configuration-container">
         <div className="sub-heading">
@@ -243,18 +245,7 @@ class DeviceReconfigureFlyout extends React.Component {
           />
         </div>
         {this.commonReconfigure()}
-        <div className="summary-container">
-          {lang.SUMMARY}
-          <div className="affected-devices">
-            <span className="num-affected-devices">
-              {totalAffectedDevices}
-            </span>
-            <span className="affected-devices-name">
-              {lang.AFFECTED_DEVICES}
-            </span>
-          </div>
-        </div>
-
+        <SummarySection count={totalAffectedDevices} content={lang.AFFECTED_DEVICES} />
         <div className="btn-container">
           <PcsBtn svg={CancelX} value={lang.CANCEL} onClick={this.props.onClose} />
           {this.state.showSpinner && <Spinner size="medium" />}

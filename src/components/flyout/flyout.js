@@ -4,6 +4,7 @@ import React from 'react';
 import DeviceDetailFlyout from './deviceDetailFlyout';
 import ManageFiltersFlyout from './manageFiltersFlyout';
 import DeviceTagFlyout from './deviceTagFlyout';
+import DeviceDeletionFlyout from './deviceDeletionFlyout';
 import RuleOverviewFlyout from '../ruleOverview/ruleOverview';
 import DeviceScheduleFlyout from './deviceScheduleFlyout';
 import DeviceReconfigureFlyout from './deviceReconfigureFlyout';
@@ -39,6 +40,9 @@ const getFlyout = (content, onClose) => {
 
     case 'Provision':
       return <DeviceProvisioningWorkflow content={content} onClose={onClose} />;
+
+    case 'Delete':
+      return <DeviceDeletionFlyout content={content} onClose={onClose} />;
 
     default:
       return null;

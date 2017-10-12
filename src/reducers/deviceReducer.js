@@ -11,6 +11,17 @@ const deviceReducer = (state = initialState.devices, action) => {
         devices: action.devices
       };
 
+    case types.UPDATE_DEVICE_LIST:
+    console.log('reducer', state.devices)
+    console.log('reducer action', action.devices)
+      return {
+        ...state,
+        devices: {
+          ...state.devices,
+          items: state.devices.items.filter(device => action.devices.every(newDevice => newDevice.Id !== device.Id))
+        }
+      };
+
     case types.LOAD_TELEMETRY_MESSAGES_FOR_MAP_UPDATE_SUCCESS:
       return {
         ...state,
