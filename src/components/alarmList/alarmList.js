@@ -111,7 +111,7 @@ class AlarmList extends Component {
   };
 
   render() {
-    const alarmsGridProps = { rowData: this.state.rowData }
+    const alarmsGridProps = { rowData: this.state.rowData };
 
     return (
       <DashboardPanel
