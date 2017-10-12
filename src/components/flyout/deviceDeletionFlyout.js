@@ -24,6 +24,15 @@ class DeviceDeletionFlyout extends React.Component {
     this.onConfirm = this.onConfirm.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { devices } = nextProps;
+    if (devices.length !== this.props.devices.length) {
+      this.setState({
+        showSpinner: false,
+        deviceDeleted: false
+      });
+    }
+  }
 
   onConfirm() {
     const { devices } = this.props;

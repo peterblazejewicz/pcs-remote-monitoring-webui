@@ -12,8 +12,6 @@ const deviceReducer = (state = initialState.devices, action) => {
       };
 
     case types.UPDATE_DEVICE_LIST:
-    console.log('reducer', state.devices)
-    console.log('reducer action', action.devices)
       return {
         ...state,
         devices: {
