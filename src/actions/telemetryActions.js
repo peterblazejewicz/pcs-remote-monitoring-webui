@@ -4,6 +4,7 @@ import * as types from './actionTypes';
 import { loadFailed } from './ajaxStatusActions';
 import { indicatorStart, indicatorEnd } from './indicatorActions';
 import ApiService from '../common/apiService';
+import lang from '../common/lang';
 
 export const loadTelemetryTypesSuccess = data => {
   return {
@@ -35,8 +36,10 @@ export const selectTelemetryType = key => {
 
 export const loadTelemetryTypes = () => {
   return dispatch => {
+    dispatch(indicatorStart('mapInitial'));
     return ApiService.getTelemetryMessages()
       .then(data => {
+        dispatch(indicatorEnd('mapInitial'));
         dispatch(loadTelemetryTypesSuccess(data.Properties));
       })
       .catch(error => {
@@ -49,8 +52,10 @@ export const loadTelemetryTypes = () => {
 //for all telemetry messages
 export const loadTelemetryMessages = params => {
   return dispatch => {
+    dispatch(indicatorStart('mapInitial'));
     return ApiService.getTelemetryMessages(params)
       .then(data => {
+        dispatch(indicatorEnd('mapInitial'));
         dispatch(loadTelemetrMessagesSuccess(data));
       })
       .catch(error => {
@@ -63,21 +68,35 @@ export const loadTelemetryMessages = params => {
 // get telemetry messages based on the deviceId's
 export const loadTelemetryMessagesByDeviceIds = deviceList => {
   return dispatch => {
-    dispatch(indicatorStart('telemetry'));
-    return ApiService.getTelemetryMessages({
-        from: 'NOW-PT15M',
-        to: 'NOW',
-        devices: deviceList,
-        order: 'desc'
-      })
-      .then(data => {
-        dispatch(loadTelemetrMessagesSuccess(data));
-        dispatch(indicatorEnd('telemetry'));
-      })
-      .catch(error => {
-        dispatch(loadFailed(error));
-        throw error;
-      });
+    dispatch(indicatorStart('mapInitial'));
+    return deviceList === lang.ALLDEVICES
+      ? ApiService.getTelemetryMessages({
+          from: 'NOW-PT15M',
+          to: 'NOW',
+          order: 'desc'
+        })
+        .then(data => {
+          dispatch(loadTelemetrMessagesSuccess(data));
+          dispatch(indicatorEnd('mapInitial'));
+        })
+        .catch(error => {
+          dispatch(loadFailed(error));
+          throw error;
+        })
+      : ApiService.getTelemetryMessages({
+          from: 'NOW-PT15M',
+          to: 'NOW',
+          devices: deviceList,
+          order: 'desc'
+        })
+        .then(data => {
+          dispatch(loadTelemetrMessagesSuccess(data));
+          dispatch(indicatorEnd('mapInitial'));
+        })
+        .catch(error => {
+          dispatch(loadFailed(error));
+          throw error;
+        });
   };
 };
 

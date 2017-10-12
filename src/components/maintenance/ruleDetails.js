@@ -102,10 +102,10 @@ class RuleDetailsPage extends Component {
   componentDidMount() {
     const ruleId = (this.props.params || {}).id;
     const ruleDetails = this.props.alarmsGridData.filter(data => data.id === ruleId)[0];
+    if (!ruleId || !ruleDetails) return;
     const alarmsByRule = ruleDetails[ruleId];
     const devicesList = this.getDeviceList(alarmsByRule);
     const devicesGridData = this.props.devices.filter(device => devicesList.has(device.Id));
-    if (!ruleId) return;
     this.setState({
       ruleId,
       devicesGridData,
@@ -125,7 +125,31 @@ class RuleDetailsPage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { updatedAlarms } = nextProps;
+    const { updatedAlarms, params, devices, alarmsGridData } = nextProps;
+    const ruleId = (params || {}).id;
+    const ruleDetails = alarmsGridData.filter(data => data.id === ruleId)[0];
+    if (!ruleId || !ruleDetails) return;
+    const alarmsByRule = ruleDetails[ruleId];
+    const devicesList = this.getDeviceList(alarmsByRule);
+    const devicesGridData = devices.filter(device => devicesList.has(device.Id));
+    this.setState({
+      ruleId,
+      devicesGridData,
+      deviceIdList: devicesGridData.map(({ Id }) => Id).join(','),
+      rowData: alarmsByRule.map(item => {
+        return {
+          id: item.Id,
+          rule_name: ruleDetails.name,
+          description: item.Description,
+          severity: item.Rule.Severity,
+          trigger_device: item.DeviceId,
+          time: item.DateCreated,
+          status: item.Status
+        };
+      })
+    });
+
+
     if(!_.isEqual(updatedAlarms, this.props.updatedAlarms) && updatedAlarms.length > 0) {
       const alarmIds = new Set(updatedAlarms.map(({Id}) => Id));
       const status = updatedAlarms[0].Status;
@@ -147,23 +171,21 @@ class RuleDetailsPage extends Component {
     });
   }
 
-  onGridReady = gridReadyEvent => gridReadyEvent.api.sizeColumnsToFit();
-
   render() {
     const ruleId = (this.props.params || {}).id;
     const ruleDetails = this.props.alarmsGridData.filter(({ id }) => id === ruleId)[0];
-    const aggregatedRule = aggregatedRuleColumnDefs.map((col, idx) => (<div className="aggregated-rule-column" key={idx}>
+    const aggregatedRule = ruleDetails ? aggregatedRuleColumnDefs.map((col, idx) => (<div className="aggregated-rule-column" key={idx}>
       <div className="aggregated-rule-details-header">{col.headerName}</div>
       <div className="aggregated-rule-details-field">{ruleDetails[col.field]}</div>
-    </div>));
+    </div>)) : null;
     const { btnActions } = this.props;
 
     const rulesAndActionsProps = {
-      rowData: ruleDetails.rule ? [ruleDetails.rule] : [],
+      rowData: (ruleDetails || {}).rule ? [ruleDetails.rule] : [],
       pagination: false,
       softSelectId: this.state.softSelectId,
       getSoftSelectId: btnActions.getSoftSelectId,
-      onGridReady: btnActions.onGridReady,
+      onGridReady: btnActions.onRuleGridReady,
       onHardSelectChange: btnActions.onRuleDetailHardSelectChange,
       onSoftSelectChange: btnActions.onRuleDetailSoftSelectionChange,
       onContextMenuChange: btnActions.onContextMenuChange
@@ -177,7 +199,9 @@ class RuleDetailsPage extends Component {
       softSelectId: this.state.softSelectedDeviceId,
       getSoftSelectId: btnActions.getSoftSelectId,
       /* Grid Events */
+      onGridReady: btnActions.onDeviceGridReady,
       onSoftSelectChange: btnActions.onSoftSelectDeviceGrid,
+      onHardSelectChange: btnActions.onDeviceGridHardSelectChange,
       onContextMenuChange: btnActions.onContextMenuChange
     };
 
@@ -193,7 +217,7 @@ class RuleDetailsPage extends Component {
     return (
       <div className="rule-details-container">
         <div className="aggregated-rule">
-          <div className="aggregated-rule-name">{ruleDetails.name}</div>
+          <div className="aggregated-rule-name">{(ruleDetails || {}).name}</div>
           <div className="aggregated-rule-details">{aggregatedRule}</div>
         </div>
         <div className="rule-subtitle">{lang.RULE_SUBTITLE}</div>
@@ -220,7 +244,7 @@ class RuleDetailsPage extends Component {
             suppressMovableColumns={true}
             softSelectId={this.state.softSelectedDeviceId}
             /* Grid Events */
-            onGridReady={this.onGridReady}
+            onGridReady={btnActions.onAlarmGridReady}
             onHardSelectChange={btnActions.onAlarmOccGridHardSelectChange}
             onSoftSelectChange={btnActions.onAlarmOccGridSoftSelectionChange}
             getSoftSelectId={this.getSoftSelectId}
