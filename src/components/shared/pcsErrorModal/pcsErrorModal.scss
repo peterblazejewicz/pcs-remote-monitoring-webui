@@ -4,7 +4,7 @@
 
 $verticalPadding: 24px;
 $horizontalPadding: 16px;
-.pcs-modal-container {
+.pcs-error-modal-container {
   display: flex;
   flex-flow: column nowrap;
   max-width: 600px;
@@ -26,31 +26,5 @@ $horizontalPadding: 16px;
         height: 16px;
       }
     }
-  }
-
-  .pcs-modal-clickable-container {
-    display: flex;
-    flex-flow: row nowrap;
-    padding-bottom: $verticalPadding;
-    padding-left: $horizontalPadding;
-    padding-right: $horizontalPadding;
-    text-decoration: none;
-    cursor: pointer;
-
-    .pcs-modal-icon {
-      margin-right: 8px;
-
-      > img {
-        width: 16px;
-        height: 16px;
-      }
-    }
-
-    .pcs-modal-content {
-      color: $white;
-      font-size: 14px; // Change to 18px when the Selawik font is fixed
-    }
-
-    &:hover .pcs-modal-content { color: $lightestGray; }
   }
 }
