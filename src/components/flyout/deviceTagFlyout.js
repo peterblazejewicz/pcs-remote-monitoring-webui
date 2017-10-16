@@ -215,10 +215,7 @@ class DeviceTagFlyout extends React.Component {
     const { devices } = this.props;
     const { newTags, deletedTagNames } = this.state;
     const deviceIds = devices.map(({ Id }) => `'${Id}'`).join(',');
-    const tags = {
-      ...this.state.commonTagValues,
-      ...this.state.overiddenDeviceTagValues
-    };
+    const tags = { ...this.state.commonTagValues };
 
     Object.keys(tags).forEach(key => {
       if (deletedTagNames.indexOf(key) !== -1) {
